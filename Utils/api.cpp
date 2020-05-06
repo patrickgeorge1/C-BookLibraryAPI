@@ -85,10 +85,28 @@ int proceed_login(string host, string &token) {
     return 0;
 }
 
-int proceed_enter_library() {
-    // TODO enter library
+int proceed_enter_library(string token, string host, string & token_access_library) {
+    string cookies[2];
+    cookies[0] = token;
 
-    return 1;
+    int sockfd = open_connection(host.c_str(), WEBSITE_PORT, AF_INET, SOCK_STREAM, 0);
+    char *message = compute_get_request("ec2-3-8-116-10.eu-west-2.compute.amazonaws.com:8080", ROUTE_ENTER_LIBRARY, NULL, cookies, 1);
+    send_to_server(sockfd, message);
+    string r = receive_from_server(sockfd);
+    close_connection(sockfd);
+
+    if (r.substr(9, 3) == "200") {
+        int posStart = r.find("{\"token\":");
+        string token_library_part = r.substr(posStart + 10, 300);
+        int posEnd = token_library_part.find("\"}");
+        token_access_library = token_library_part.substr(0, posEnd);
+        return 1;
+    }
+
+    int posStart = r.find("{\"error\":");
+    string errorPart = r.substr(posStart, 200);
+    cout << errorPart << endl;
+    return 0;
 }
 
 int proceed_get_books() {

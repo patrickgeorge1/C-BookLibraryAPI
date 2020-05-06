@@ -162,7 +162,7 @@ void compute_message(char *message, const char *line)
 }
 
 char *compute_get_request(const char *host, const char *url, char *query_params,
-                          char **cookies, int cookies_count)
+                          string cookies[MAX_COOKIES], int cookies_count)
 {
     char *message = (char *) calloc(BUFLEN, sizeof(char));
     char *line = (char *) calloc(LINELEN, sizeof(char));
@@ -181,17 +181,10 @@ char *compute_get_request(const char *host, const char *url, char *query_params,
     compute_message(message, line);
 
     // Step 3 (optional): add headers and/or cookies, according to the protocol format
-    if (cookies != NULL) {
-        char  cook[] = "ETag: W/";
-
+    if (cookies_count >  0) {
         for (int i = 0; i < cookies_count; ++i) {
-            strcat(cook, cookies[i]);
+            compute_message(message, cookies[i].c_str());
         }
-
-        char cook_format[] = "ETag: W/";
-        strcat(cook_format, cook);
-        compute_message(message, cook_format);
-
     }
     // Step 4: add final new line
     compute_message(message, "");

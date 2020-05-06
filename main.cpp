@@ -19,7 +19,8 @@ int main() {
 
     bool isAuthenticated = false;
     string command;
-    string token(" ");
+    string token("-");
+    string access_library_token("-");
     int status_sumary;
 
     string host = getIPbyHostName();
@@ -45,7 +46,10 @@ int main() {
                 break;
 
             case COMMAND_ENTER_LIBRARY:
-                status_sumary = proceed_enter_library();
+                status_sumary = 1;
+                if (token == "-") cout << "You have to log in first" << endl;
+                else status_sumary = proceed_enter_library(token, host, access_library_token);
+                if (access_library_token != "-") cout << "Accessed successfully !" << endl;
                 break;
 
             case COMMAND_GET_BOOKS:

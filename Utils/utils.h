@@ -37,6 +37,8 @@
 #define EXECUTION_LOGIN_CODE_SUCCESS 1
 #define EXECUTION_LOGIN_CODE_FAIL 2
 
+#define MAX_COOKIES 14
+
 void CHECK(bool ok, std::string message);
 void DIE(bool ok, std::string message);
 int getSwitchCommand(std::string command);
@@ -45,7 +47,7 @@ std::string receive_from_server(int sockfd);
 int open_connection(const char *host_ip, int portno, int ip_type, int socket_type, int flag);
 void close_connection(int sockfd);
 char *compute_get_request(const char *host, const char *url, char *query_params,
-                          char **cookies, int cookies_count);
+                          std::string cookies[], int cookies_count);
 char *compute_post_request(const char *host, const char *url, const char* content_type, std::string body_data,
                            int body_data_fields_count, char **cookies, int cookies_count);
 #endif //BOOKLIBRARY_UTILS_H
