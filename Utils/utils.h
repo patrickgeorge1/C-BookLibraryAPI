@@ -46,6 +46,6 @@ int open_connection(const char *host_ip, int portno, int ip_type, int socket_typ
 void close_connection(int sockfd);
 char *compute_get_request(const char *host, const char *url, char *query_params,
                           char **cookies, int cookies_count);
-char *compute_post_request(const char *host, const char *url, const char* content_type, char **body_data,
+char *compute_post_request(const char *host, const char *url, const char* content_type, std::string body_data,
                            int body_data_fields_count, char **cookies, int cookies_count);
 #endif //BOOKLIBRARY_UTILS_H

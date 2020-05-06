@@ -14,6 +14,9 @@
 #include <stdio.h>
 #include <string.h>     /* memcpy, memset */
 
+using namespace std;
+
+
 void CHECK(bool ok, std::string message) {
     // defensive programming
     if (ok) {
@@ -139,6 +142,11 @@ std::string receive_from_server(int sockfd)
     std::string result(buffer.data);
     buffer_destroy(& buffer);
     return result;
+
+//    int bytes = read(sockfd, response, BUFLEN);
+//    DIE(bytes < 0, "ERROR reading response from socket");
+//    std::string res (response);
+//    return  res;
 }
 
 void close_connection(int sockfd)
@@ -190,7 +198,7 @@ char *compute_get_request(const char *host, const char *url, char *query_params,
     return message;
 }
 
-char *compute_post_request(const char *host, const char *url, const char* content_type, char **body_data,
+char *compute_post_request(const char *host, const char *url, const char* content_type, std::string body_data,
                            int body_data_fields_count, char **cookies, int cookies_count)
 {
     char *message = (char *) calloc(BUFLEN, sizeof(char));
@@ -212,14 +220,14 @@ char *compute_post_request(const char *host, const char *url, const char* conten
     sprintf(line, "Content-Type: %s", content_type);
     compute_message(message, line);
 
-    strcat(body_data_buffer, body_data[0]);
-    for (int i = 1; i < body_data_fields_count; ++i) {
-        strcat(body_data_buffer, "&");
-        strcat(body_data_buffer, body_data[i]);
-    }
+//    strcat(body_data_buffer, body_data[0]);
+//    for (int i = 1; i < body_data_fields_count; ++i) {
+//        strcat(body_data_buffer, "&");
+//        strcat(body_data_buffer, body_data[i]);
+//    }
 
     line = (char *) calloc(LINELEN, sizeof(char));
-    sprintf(line, "Content-Length: %zu", strlen(body_data_buffer));
+    sprintf(line, "Content-Length: %zu", body_data.length());
     compute_message(message, line);
 
     // Step 4 (optional): add cookies
@@ -232,7 +240,8 @@ char *compute_post_request(const char *host, const char *url, const char* conten
 
     // Step 6: add the actual payload data
     memset(line, 0, LINELEN);
-    compute_message(message, body_data_buffer);
+    if (body_data_fields_count > 0)
+    compute_message(message, body_data.c_str());
 
     free(line);
     return message;

@@ -8,8 +8,11 @@
 #include <cstring>
 #include "api.h"
 #include "utils.h"
+#include "nlohmann/json.hpp"
+
 
 using namespace std;
+using json = nlohmann::json;
 
 string getIPbyHostName() {
     struct hostent *hp = gethostbyname(WEBSITE_HOSTNAME);
@@ -27,36 +30,25 @@ int proceed_register(string host) {
     cout << "username=";           cin >> username;          cout << endl;
     cout << "password=";           cin >> password;          cout << endl;
 
-    char **body_data = (char **) malloc(2 * sizeof(char *));
-    body_data[0] = (char *) malloc(40 * sizeof(char));
-    strcpy(body_data[0], "username=");
-    strcat(body_data[0], username.c_str());
-    body_data[1] = (char *) malloc(40 * sizeof(char));
-    strcpy(body_data[1], "password=");
-    strcat(body_data[1], password.c_str());
+    json j = {
+            {"username", username},
+            {"password", password},
+    };
 
     int sockfd = open_connection(host.c_str(), WEBSITE_PORT, AF_INET, SOCK_STREAM, 0);
-    char *message = compute_post_request(host.c_str(),  ROUTE_REGISTER, "application/x-www-form-urlencoded", body_data, 2, NULL, 0);
+    char *message = compute_post_request("ec2-3-8-116-10.eu-west-2.compute.amazonaws.com:8080",  ROUTE_REGISTER, "application/json", j.dump(), 2, NULL, 0);
     send_to_server(sockfd, message);
     string r = receive_from_server(sockfd);
     close_connection(sockfd);
 
-    free(body_data[0]);
-    free(body_data[1]);
+    if (r.substr(9, 3) == "201") {
+        cout << "Account crated !" << endl;
+        return 1;
+    }
+    int posStart = r.find("{\"error\":");
+    string errorPart = r.substr(posStart, 200);
+    cout << errorPart << endl;
 
-    char * response =  (char *) malloc(r.length()  * sizeof(char));
-    response = (char *) r.c_str();
-    char * copy_response = (char *) malloc( sizeof(response) * sizeof(char));
-    strcpy(copy_response, response);
-
-    char * first_line = (char *) strtok(response, "\n");
-    char * first_word = (char *) strtok(response, " ");
-    char * status = (char *) strtok(NULL, " ");
-
-    if (strncmp(status, "201", 3) == 0) cout << "succesfully registered !" << endl;
-    else cout << "failed !" << endl;
-
-    return (strncmp(status, "201", 3) == 0);
     return 0;
 }
 
@@ -66,47 +58,31 @@ int proceed_login(string host, string &token) {
     cout << "username=";           cin >> username;          cout << endl;
     cout << "password=";           cin >> password;          cout << endl;
 
-    char **body_data = (char **) malloc(2 * sizeof(char *));
-    body_data[0] = (char *) malloc(40 * sizeof(char));
-    strcpy(body_data[0], "username=");
-    strcat(body_data[0], username.c_str());
-    body_data[1] = (char *) malloc(40 * sizeof(char));
-    strcpy(body_data[1], "password=");
-    strcat(body_data[1], password.c_str());
+    json j = {
+            {"username", username},
+            {"password", password},
+    };
 
     int sockfd = open_connection(host.c_str(), WEBSITE_PORT, AF_INET, SOCK_STREAM, 0);
-    char *message = compute_post_request(host.c_str(),  ROUTE_LOGIN, "application/x-www-form-urlencoded", body_data, 2, NULL, 0);
+    char *message = compute_post_request("ec2-3-8-116-10.eu-west-2.compute.amazonaws.com:8080",  ROUTE_LOGIN, "application/json", j.dump(), 2, NULL, 0);
     send_to_server(sockfd, message);
     string r = receive_from_server(sockfd);
     close_connection(sockfd);
 
-    free(body_data[0]);
-    free(body_data[1]);
+    if (r.substr(9, 3) == "200") {
+        int posStart = r.find("Cookie: ");
 
-    char * response =  (char *) malloc(r.length()  * sizeof(char));
-    response = (char *) r.c_str();
-    char * copy_response = (char *) malloc( sizeof(response) * sizeof(char));
-    strcpy(copy_response, response);
+        string cookiePart = r.substr(posStart, 200);
+        int posEnd = cookiePart.find("; Path=/");
 
-    char * first_line = (char *) strtok(response, "\n");
-    char * first_word = (char *) strtok(response, " ");
-    char * status = (char *) strtok(NULL, " ");
-
-
-    free(response);
-
-    if (strncmp(status, "200", 3) == 0) {
-        std::string all_response (copy_response);
-        std::string delimiter = "connect.sid=";
-
-        token = all_response.substr(all_response.find(delimiter) + delimiter.length());
-
-        delimiter = "; Path=/";
-        token = token.substr(0, token.find(delimiter));
+        token =  cookiePart.substr(0, posEnd);
+        return 1;
     }
+    int posStart = r.find("{\"error\":");
+    string errorPart = r.substr(posStart, 200);
+    cout << errorPart << endl;
 
-    free(copy_response);
-    return (strncmp(status, "200", 3) == 0);
+    return 0;
 }
 
 int proceed_enter_library() {
