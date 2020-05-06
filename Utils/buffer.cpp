@@ -2,6 +2,7 @@
 // Created by patrickgeorge1 on 5/6/20.
 //
 
+#include <iostream>
 #include "buffer.h"
 
 buffer buffer_init(void)
@@ -38,7 +39,6 @@ void buffer_add(buffer *buffer, const char *data, size_t data_size)
     }
 
     memcpy(buffer->data + buffer->size, data, data_size);
-
     buffer->size += data_size;
 }
 

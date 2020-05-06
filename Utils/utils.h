@@ -7,7 +7,7 @@
 
 #define FOREVER while(1)
 
-#define WEBSITE_HOSTNAME ec2-3-8-116-10.eu-west-2.compute.amazonaws.com
+#define WEBSITE_HOSTNAME "ec2-3-8-116-10.eu-west-2.compute.amazonaws.com"
 #define WEBSITE_PORT 8080
 #define COMMAND_INVALID -1
 #define COMMAND_EXIT 0
@@ -20,6 +20,17 @@
 #define COMMAND_DELETE_BOOK 7
 #define COMMAND_LOGOUT 8
 
+#define ROUTE_REGISTER " /api/v1/tema/auth/register"
+#define ROUTE_LOGIN "/api/v1/tema/auth/login"
+#define ROUTE_ENTER_LIBRARY "/api/v1/tema/library/access"
+#define ROUTE_GET_BOOKS " /api/v1/tema/library/books"
+#define ROUTE_GET_BOOK " /api/v1/tema/library/books"
+#define ROUTE_ADD_BOOK "/api/v1/tema/library/books"
+#define ROUTE_REMOVE_BOOK "/api/v1/tema/library/books/"
+#define ROUTE_LOGOUT " /api/v1/tema/auth/logout"
+
+#define REQUEST_FORMAT_URL_ENCODED "application/x-www-form-urlencoded"
+
 #define MESSAGE_COMMAND_INVALID "camanda introdusa nu este valida"
 #define MESSAGE_COMMAND_FAILED "nu s-a putut executa comanda"
 
@@ -30,11 +41,11 @@ void CHECK(bool ok, std::string message);
 void DIE(bool ok, std::string message);
 int getSwitchCommand(std::string command);
 void send_to_server(int sockfd, char *message);
-char *receive_from_server(int sockfd);
+std::string receive_from_server(int sockfd);
 int open_connection(const char *host_ip, int portno, int ip_type, int socket_type, int flag);
 void close_connection(int sockfd);
 char *compute_get_request(const char *host, const char *url, char *query_params,
                           char **cookies, int cookies_count);
-char *compute_post_request(const char *host, const char *url, char* content_type, char **body_data,
+char *compute_post_request(const char *host, const char *url, const char* content_type, char **body_data,
                            int body_data_fields_count, char **cookies, int cookies_count);
 #endif //BOOKLIBRARY_UTILS_H

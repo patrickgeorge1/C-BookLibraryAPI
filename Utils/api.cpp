@@ -3,30 +3,104 @@
 //
 
 #include <iostream>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <cstring>
 #include "api.h"
+#include "utils.h"
 
 using namespace std;
 
-int proceed_register() {
-    string username, password;
-
-    cout << "username=";           cin >> username;          cout << endl;
-    cout << "password=";           cin >> password;          cout << endl;
-
-    //TODO register
-
-    return 1;
+string getIPbyHostName() {
+    struct hostent *hp = gethostbyname(WEBSITE_HOSTNAME);
+    char * host = (char *) malloc(20 * sizeof(char));
+    sprintf(host, "%s ", inet_ntoa( *( struct in_addr*)( hp -> h_addr_list[0])));
+    string h(host);
+    free(host);
+    return h;
 }
 
-int proceed_login() {
+
+int proceed_register(string host) {
     string username, password;
 
     cout << "username=";           cin >> username;          cout << endl;
     cout << "password=";           cin >> password;          cout << endl;
 
-    // TODO login
+//    char **body_data = (char **) malloc(2 * sizeof(char *));
+//    body_data[0] = (char *) malloc(40 * sizeof(char));
+//    strcpy(body_data[0], "username=");
+//    strcat(body_data[0], username.c_str());
+//    body_data[1] = (char *) malloc(40 * sizeof(char));
+//    strcpy(body_data[1], "password=");
+//    strcat(body_data[1], password.c_str());
+//
+//
+//
+//    int sockfd = open_connection(host.c_str(), WEBSITE_PORT, AF_INET, SOCK_STREAM, 0);
+//    char *message = compute_post_request(host.c_str(),  ROUTE_REGISTER, "application/x-www-form-urlencoded", body_data, 2, NULL, 0);
+//    send_to_server(sockfd, message);
+//    char *response = receive_from_server(sockfd);
+//    close_connection(sockfd);
+//
+//    char * first_line = (char *) strtok(response, "\n");
+//    char * first_word = (char *) strtok(response, " ");
+//    char * status = (char *) strtok(NULL, " ");
+//
+//    if (strcmp(status, "201") == 0) cout << "succesfully registered !" << endl;
+//    else cout << "failed !" << endl;
+//
+//    return (strcmp(status, "201") == 0);
+    return 0;
+}
 
-    return 1;
+int proceed_login(string host, string &token) {
+    string username, password;
+
+    cout << "username=";           cin >> username;          cout << endl;
+    cout << "password=";           cin >> password;          cout << endl;
+
+    char **body_data = (char **) malloc(2 * sizeof(char *));
+    body_data[0] = (char *) malloc(40 * sizeof(char));
+    strcpy(body_data[0], "username=");
+    strcat(body_data[0], username.c_str());
+    body_data[1] = (char *) malloc(40 * sizeof(char));
+    strcpy(body_data[1], "password=");
+    strcat(body_data[1], password.c_str());
+
+    int sockfd = open_connection(host.c_str(), WEBSITE_PORT, AF_INET, SOCK_STREAM, 0);
+    char *message = compute_post_request(host.c_str(),  ROUTE_LOGIN, "application/x-www-form-urlencoded", body_data, 2, NULL, 0);
+    send_to_server(sockfd, message);
+    string r = receive_from_server(sockfd);
+    close_connection(sockfd);
+
+    free(body_data[0]);
+    free(body_data[1]);
+
+    char * response =  (char *) malloc(r.length()  * sizeof(char));
+    response = (char *) r.c_str();
+    char * copy_response = (char *) malloc( sizeof(response) * sizeof(char));
+    strcpy(copy_response, response);
+
+    char * first_line = (char *) strtok(response, "\n");
+    char * first_word = (char *) strtok(response, " ");
+    char * status = (char *) strtok(NULL, " ");
+
+
+    free(response);
+
+    if (strncmp(status, "200", 3) == 0) {
+        std::string all_response (copy_response);
+        std::string delimiter = "connect.sid=";
+
+        token = all_response.substr(all_response.find(delimiter) + delimiter.length());
+
+        delimiter = "; Path=/";
+        token = token.substr(0, token.find(delimiter));
+    }
+
+    free(copy_response);
+    return (strncmp(status, "200", 3) == 0);
 }
 
 int proceed_enter_library() {

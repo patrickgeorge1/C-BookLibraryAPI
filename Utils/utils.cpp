@@ -86,10 +86,12 @@ void send_to_server(int sockfd, char *message)
     } while (sent < total);
 }
 
-char *receive_from_server(int sockfd)
+// TODO PROBLEM SOLVED
+std::string receive_from_server(int sockfd)
 {
     char response[BUFLEN];
     buffer buffer = buffer_init();
+
     int header_end = 0;
     int content_length = 0;
 
@@ -97,13 +99,11 @@ char *receive_from_server(int sockfd)
         int bytes = read(sockfd, response, BUFLEN);
         DIE(bytes < 0, "ERROR reading response from socket");
 
-
         if (bytes == 0) {
             break;
         }
 
         buffer_add(&buffer, response, (size_t) bytes);
-
         header_end = buffer_find(&buffer, HEADER_TERMINATOR, HEADER_TERMINATOR_SIZE);
 
         if (header_end >= 0) {
@@ -119,21 +119,26 @@ char *receive_from_server(int sockfd)
             content_length = strtol(buffer.data + content_length_start, NULL, 10);
             break;
         }
+
     } while (1);
     size_t total = content_length + (size_t) header_end;
 
     while (buffer.size < total) {
         int bytes = read(sockfd, response, BUFLEN);
+
         DIE(bytes < 0, "ERROR reading response from socket");
 
         if (bytes == 0) {
             break;
         }
-
         buffer_add(&buffer, response, (size_t) bytes);
+
     }
+
     buffer_add(&buffer, "", 1);
-    return buffer.data;
+    std::string result(buffer.data);
+    buffer_destroy(& buffer);
+    return result;
 }
 
 void close_connection(int sockfd)
@@ -185,7 +190,7 @@ char *compute_get_request(const char *host, const char *url, char *query_params,
     return message;
 }
 
-char *compute_post_request(const char *host, char *url, const char* content_type, char **body_data,
+char *compute_post_request(const char *host, const char *url, const char* content_type, char **body_data,
                            int body_data_fields_count, char **cookies, int cookies_count)
 {
     char *message = (char *) calloc(BUFLEN, sizeof(char));

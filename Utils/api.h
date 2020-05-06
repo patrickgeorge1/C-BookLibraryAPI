@@ -7,9 +7,9 @@
 
 
 
-
-int proceed_register();
-int proceed_login();
+std::string getIPbyHostName();
+int proceed_register(std::string);
+int proceed_login(std::string, std::string &);
 int proceed_enter_library();
 int proceed_get_books();
 int proceed_get_book();
