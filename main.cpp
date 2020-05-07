@@ -41,13 +41,13 @@ int main() {
                 status_sumary = proceed_login(host, token);
                 isAuthenticated = (status_sumary == 1) ? true : false;
                 if (isAuthenticated) {
-                    cout << "token = |" << token << "|" << endl;
+                    cout << " Authentication successful !" << endl;
                 }
                 break;
 
             case COMMAND_ENTER_LIBRARY:
                 status_sumary = 1;
-                if (token == "-") cout << "You have to log in first" << endl;
+                if (token == "-") cout << "You have to    log in/ get access     first" << endl;
                 else status_sumary = proceed_enter_library(token, host, access_library_token);
                 if (access_library_token != "-") {
                     access_library_token = "Authorization: Bearer " + access_library_token;
@@ -56,23 +56,30 @@ int main() {
                 break;
 
             case COMMAND_GET_BOOKS:
-                status_sumary = proceed_get_books(host, token, access_library_token);
+
+                if (access_library_token != "-") status_sumary = proceed_get_books(host, token, access_library_token);
+                else cout << "You have to    log in/ get access     first" << endl;
                 break;
 
             case COMMAND_GET_BOOK:
-                status_sumary = proceed_get_book(host, token, access_library_token);
+                if (access_library_token != "-") status_sumary = proceed_get_book(host, token, access_library_token);
+                else cout << "You have to    log in/ get access     first" << endl;
                 break;
 
             case COMMAND_ADD_BOOK:
-                status_sumary = proceed_add_book(host, token, access_library_token);
+                if (access_library_token != "-") status_sumary = proceed_add_book(host, token, access_library_token);
+                else cout << "You have to    log in/ get access     first" << endl;
                 break;
 
             case COMMAND_DELETE_BOOK:
-                status_sumary = proceed_delete_book();
+                if (access_library_token != "-") status_sumary = proceed_delete_book(host, token, access_library_token);
+                else cout << "You have to    log in/ get access     first" << endl;
+
                 break;
 
             case COMMAND_LOGOUT:
-                status_sumary = proceed_logut();
+                if (access_library_token != "-") status_sumary = proceed_logut(host, token, access_library_token);
+                else cout << "You have to    log in/ get access     first" << endl;
                 break;
 
             case COMMAND_INVALID:

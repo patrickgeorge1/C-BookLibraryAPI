@@ -242,3 +242,32 @@ char *compute_post_request(const char *host, const char *url, const char* conten
     return message;
 }
 
+char *compute_delete_request(const char *host, const char *url, char *query_params,
+                          string cookies[MAX_COOKIES], int cookies_count)
+{
+    char *message = (char *) calloc(BUFLEN, sizeof(char));
+    char *line = (char *) calloc(LINELEN, sizeof(char));
+
+    // Step 1: write the method name, URL, request params (if any) and protocol type
+    if (query_params != NULL) {
+        sprintf(line, "DELETE %s?%s HTTP/1.1", url, query_params);
+    } else {
+        sprintf(line, "DELETE %s HTTP/1.1", url);
+    }
+    compute_message(message, line);
+
+    // Step 2: add the host
+    line = (char *) calloc(LINELEN, sizeof(char));
+    sprintf(line, "Host: %s", host);
+    compute_message(message, line);
+
+    // Step 3 (optional): add headers and/or cookies, according to the protocol format
+    if (cookies_count >  0) {
+        for (int i = 0; i < cookies_count; ++i) {
+            compute_message(message, cookies[i].c_str());
+        }
+    }
+    // Step 4: add final new line
+    compute_message(message, "");
+    return message;
+}

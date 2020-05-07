@@ -14,7 +14,7 @@ int proceed_enter_library(std::string, std::string, std::string &);
 int proceed_get_books(std::string, std::string, std::string);
 int proceed_get_book(std::string, std::string, std::string);
 int proceed_add_book(std::string, std::string, std::string);
-int proceed_delete_book();
-int proceed_logut();
+int proceed_delete_book(std::string, std::string, std::string);
+int proceed_logut(std::string, std::string, std::string);
 
 #endif //BOOKLIBRARY_API_H
