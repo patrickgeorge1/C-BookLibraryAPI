@@ -1,0 +1,46 @@
+-------------------------   SOLVE   -------------------------------
+
+1.) dns request to obtain IP
+2.) read command from keyboard
+3.) match command with existing types
+4.) sent request accordingly with command
+
+Credentials life :
+    - after a succesful login cookie is saved in "token"
+    - after a succesful enter_library token is saved
+          in "access_library_token"
+    - after a succesful logout both "token" and
+          "access_library_token" are destroyed
+
+Checking if a user is authorized:
+    - before each command check if credentials are set
+
+Checking if a command fails :
+    - each function returns a "status_sumary"
+    - if "status_sumary" < 0 ==> failed
+
+Logging error messages from server :
+    - take response after each request
+    - based on response status display response error message
+
+
+
+--------------------   PROBLEMS ENCOUNTERED   ------------------------
+
+
+!! buffer_destroy() imported from skel code was never used, so each
+time I was leaving a function with a nlohmann object inside it,
+nlohmann's destructor failed and I received SEGFAULT .....
+To solve it, I had to find the right place too call buffer_destroy();
+
+
+
+----------------------------   INCLUDES   -----------------------------
+
+nlohmann :                https://github.com/nlohmann/json
+
+    - was eazy to find documentation : https://kezunlin.me/post/f3c3eb8/
+    - still supported by comunnity
+    - access fields as array/ map style
+
+http_request_api :        https://ocw.cs.pub.ro/courses/pc/laboratoare/10
