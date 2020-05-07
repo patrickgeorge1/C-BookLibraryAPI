@@ -192,7 +192,7 @@ char *compute_get_request(const char *host, const char *url, char *query_params,
 }
 
 char *compute_post_request(const char *host, const char *url, const char* content_type, std::string body_data,
-                           int body_data_fields_count, char **cookies, int cookies_count)
+                           int body_data_fields_count, string cookies[MAX_COOKIES], int cookies_count)
 {
     char *message = (char *) calloc(BUFLEN, sizeof(char));
     char *line = (char *) calloc(LINELEN, sizeof(char));
@@ -224,8 +224,10 @@ char *compute_post_request(const char *host, const char *url, const char* conten
     compute_message(message, line);
 
     // Step 4 (optional): add cookies
-    if (cookies != NULL) {
-
+    if (cookies_count >  0) {
+        for (int i = 0; i < cookies_count; ++i) {
+            compute_message(message, cookies[i].c_str());
+        }
     }
     // Step 5: add new line at end of header
     compute_message(message, "");

@@ -49,19 +49,22 @@ int main() {
                 status_sumary = 1;
                 if (token == "-") cout << "You have to log in first" << endl;
                 else status_sumary = proceed_enter_library(token, host, access_library_token);
-                if (access_library_token != "-") cout << "Accessed successfully !" << endl;
+                if (access_library_token != "-") {
+                    access_library_token = "Authorization: Bearer " + access_library_token;
+                    cout << "Accessed successfully ! " << endl;
+                }
                 break;
 
             case COMMAND_GET_BOOKS:
-                status_sumary = proceed_get_books();
+                status_sumary = proceed_get_books(host, token, access_library_token);
                 break;
 
             case COMMAND_GET_BOOK:
-                status_sumary = proceed_get_book();
+                status_sumary = proceed_get_book(host, token, access_library_token);
                 break;
 
             case COMMAND_ADD_BOOK:
-                status_sumary = proceed_add_book();
+                status_sumary = proceed_add_book(host, token, access_library_token);
                 break;
 
             case COMMAND_DELETE_BOOK:
