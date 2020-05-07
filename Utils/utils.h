@@ -7,7 +7,8 @@
 
 #define FOREVER while(1)
 
-#define WEBSITE_HOSTNAME "ec2-3-8-116-10.eu-west-2.compute.amazonaws.com"
+#define WEBSITE_HOSTNAME "ec2-3-8-116-10.eu-west-2.compute.amazonaws.com:8080"
+#define WEBSITE_HOST "ec2-3-8-116-10.eu-west-2.compute.amazonaws.com"
 #define WEBSITE_PORT 8080
 #define COMMAND_INVALID -1
 #define COMMAND_EXIT 0
@@ -29,13 +30,8 @@
 #define ROUTE_REMOVE_BOOK "/api/v1/tema/library/books/"
 #define ROUTE_LOGOUT " /api/v1/tema/auth/logout"
 
-#define REQUEST_FORMAT_URL_ENCODED "application/x-www-form-urlencoded"
-
 #define MESSAGE_COMMAND_INVALID "camanda introdusa nu este valida"
 #define MESSAGE_COMMAND_FAILED "nu s-a putut executa comanda"
-
-#define EXECUTION_LOGIN_CODE_SUCCESS 1
-#define EXECUTION_LOGIN_CODE_FAIL 2
 
 #define MAX_COOKIES 14
 

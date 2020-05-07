@@ -23,12 +23,16 @@ int main() {
     string access_library_token("-");
     int status_sumary;
 
+    // get host
     string host = getIPbyHostName();
 
 
     do {
+        // get command
         cin >> command;
         switch (getSwitchCommand(command)) {
+            // CHECK AND PERFORM EACH COMMAND
+
             case COMMAND_EXIT:
                 exit(EXIT_SUCCESS);
                 break;
@@ -38,6 +42,7 @@ int main() {
                 break;
 
             case COMMAND_LOGIN:
+                // log in and save cookie in token
                 status_sumary = proceed_login(host, token);
                 isAuthenticated = (status_sumary == 1) ? true : false;
                 if (isAuthenticated) {
@@ -46,6 +51,7 @@ int main() {
                 break;
 
             case COMMAND_ENTER_LIBRARY:
+                // save token in access_library_token
                 status_sumary = 1;
                 if (token == "-") cout << "You have to    log in/ get access     first" << endl;
                 else status_sumary = proceed_enter_library(token, host, access_library_token);
@@ -78,9 +84,9 @@ int main() {
                 break;
 
             case COMMAND_LOGOUT:
+                // log out and delete token and cookie
                 if (token != "-") {
                     status_sumary = proceed_logut(host, token, access_library_token);
-                    cout << "Logged out " << endl;
                 }
                 else cout << "You have to    log in/ get access     first" << endl;
                 token = "-";
@@ -90,10 +96,11 @@ int main() {
             case COMMAND_INVALID:
                 cout << MESSAGE_COMMAND_INVALID << endl;
                 break;
-
         }
-        CHECK(status_sumary < 0, MESSAGE_COMMAND_FAILED);
 
+        // check if any request failed
+        CHECK(status_sumary < 0, MESSAGE_COMMAND_FAILED);
+        cout << endl << endl << "-------------------------------" << endl << endl << endl << endl;
     } FOREVER;
 
 

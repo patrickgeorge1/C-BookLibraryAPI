@@ -142,11 +142,6 @@ std::string receive_from_server(int sockfd)
     std::string result(buffer.data);
     buffer_destroy(& buffer);
     return result;
-
-//    int bytes = read(sockfd, response, BUFLEN);
-//    DIE(bytes < 0, "ERROR reading response from socket");
-//    std::string res (response);
-//    return  res;
 }
 
 void close_connection(int sockfd)
@@ -212,12 +207,6 @@ char *compute_post_request(const char *host, const char *url, const char* conten
     line = (char *) calloc(LINELEN, sizeof(char));
     sprintf(line, "Content-Type: %s", content_type);
     compute_message(message, line);
-
-//    strcat(body_data_buffer, body_data[0]);
-//    for (int i = 1; i < body_data_fields_count; ++i) {
-//        strcat(body_data_buffer, "&");
-//        strcat(body_data_buffer, body_data[i]);
-//    }
 
     line = (char *) calloc(LINELEN, sizeof(char));
     sprintf(line, "Content-Length: %zu", body_data.length());
