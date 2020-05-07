@@ -78,8 +78,13 @@ int main() {
                 break;
 
             case COMMAND_LOGOUT:
-                if (access_library_token != "-") status_sumary = proceed_logut(host, token, access_library_token);
+                if (token != "-") {
+                    status_sumary = proceed_logut(host, token, access_library_token);
+                    cout << "Logged out " << endl;
+                }
                 else cout << "You have to    log in/ get access     first" << endl;
+                token = "-";
+                access_library_token = "-";
                 break;
 
             case COMMAND_INVALID:

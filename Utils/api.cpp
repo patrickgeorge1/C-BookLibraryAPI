@@ -227,7 +227,15 @@ int proceed_delete_book(std::string host, std::string token, std::string access_
 }
 
 int proceed_logut(std::string host, std::string token, std::string access_library_token) {
-    // TODO logout
+    string cookies[2];
+    cookies[0] = token;
+    cookies[1] = access_library_token;
+
+    int sockfd = open_connection(host.c_str(), WEBSITE_PORT, AF_INET, SOCK_STREAM, 0);
+    char *message = compute_get_request("ec2-3-8-116-10.eu-west-2.compute.amazonaws.com:8080", ROUTE_LOGOUT, NULL, cookies, 1);
+    send_to_server(sockfd, message);
+    string r = receive_from_server(sockfd);
+    close_connection(sockfd);
 
     return 1;
 }

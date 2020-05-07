@@ -49,7 +49,7 @@ int getSwitchCommand(std::string command) {
                             else
                                 if (command == "delete_book") return COMMAND_DELETE_BOOK;
                                 else
-                                    if (command == "logut") return COMMAND_LOGOUT;
+                                    if (command == "logout") return COMMAND_LOGOUT;
                                     else return COMMAND_INVALID;
 }
 
